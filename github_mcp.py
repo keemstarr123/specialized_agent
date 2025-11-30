@@ -429,6 +429,15 @@ def creative_agent_interaction(prompt: UserInput):
                 )["messages"][-1]
     return result 
 
+@app.get("/ping")
+async def ping():
+    return {"status": "ok"}
+
+# example endpoint that uses MCP tools (pseudo)
+@app.get("/mcp-test")
+async def mcp_test():
+    tools = await mcp_client.get_tools()
+    return {"tool_count": len(tools)}
 
 
 
