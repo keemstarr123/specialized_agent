@@ -411,7 +411,7 @@ def creative_agent_interaction(prompt: UserInput):
                         }]
                     },
                     config={"recursion_limit": 25},
-                )["messages"][-1]['content'][0]['text']
+                )["messages"][-1].content
     return result 
 
 @app.post("/media")
@@ -426,8 +426,7 @@ def creative_agent_interaction(prompt: UserInput):
                         }]
                     },
                     config={"recursion_limit": 25},
-                )["messages"][-1]["messages"][-1]['content'][0]['text']
-    return result 
+                )["messages"][-1].content
 
 @app.get("/ping")
 async def ping():
