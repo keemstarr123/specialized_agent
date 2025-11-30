@@ -406,7 +406,7 @@ def creative_agent_interaction(prompt: UserInput):
                         "messages": [{
                             "role": "user",
                             "content": (
-                                prompt                            
+                                prompt.query                            
                             )
                         }]
                     },
