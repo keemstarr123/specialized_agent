@@ -1,26 +1,24 @@
-# Base image with Node (for npx) + Debian so we can add Python
-FROM node:20-bullseye
+# Use stable Python release (compatible with langchain-mcp-adapters)
+FROM python:3.12-slim
 
-# Install Python and pip
+# Install Node.js + npm so we can run npx for MCP server
 RUN apt-get update && \
-    apt-get install -y python3 python3-pip && \
+    apt-get install -y nodejs npm && \
     rm -rf /var/lib/apt/lists/*
 
-# Set workdir
+# Set working directory
 WORKDIR /app
 
-# Install Python deps
+# Install Python dependencies
 COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy app code
 COPY . .
 
-# Render will set PORT env; default to 8000 for local runs
+# Render-managed port
 ENV PORT=8000
-
-# Expose the port for local testing (Render ignores EXPOSE but it's fine)
 EXPOSE 8000
 
-# Start FastAPI using uvicorn; MCP server will be spawned via subprocess (npx) from Python
-CMD ["sh", "-c", "uvicorn file:app --host 0.0.0.0 --port ${PORT}"]
+# Start FastAPI app
+CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT}"]
