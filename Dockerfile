@@ -21,4 +21,4 @@ ENV PORT=8000
 EXPOSE 8000
 
 # Start FastAPI app
-CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT}"]
+CMD ["sh", "-c", "uvicorn github_mcp:app --host 0.0.0.0 --port ${PORT}"]
