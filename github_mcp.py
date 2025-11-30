@@ -406,12 +406,12 @@ def creative_agent_interaction(prompt: UserInput):
                         "messages": [{
                             "role": "user",
                             "content": (
-                                prompt.query                            
+                                prompt.query                       
                             )
                         }]
                     },
                     config={"recursion_limit": 25},
-                )["messages"][-1]
+                )["messages"][-1]['content'][0]['text']
     return result 
 
 @app.post("/media")
@@ -421,12 +421,12 @@ def creative_agent_interaction(prompt: UserInput):
                         "messages": [{
                             "role": "user",
                             "content": (
-                                "Trigger the Whatsapp send"
+                                prompt.query
                             )
                         }]
                     },
                     config={"recursion_limit": 25},
-                )["messages"][-1]
+                )["messages"][-1]["messages"][-1]['content'][0]['text']
     return result 
 
 @app.get("/ping")
