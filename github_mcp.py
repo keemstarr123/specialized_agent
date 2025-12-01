@@ -389,6 +389,8 @@ def send_whatsapp(link:str):
     print("Message sent!")
     print("SID:", message.sid)
 
+    return JSONResponse(content={"status": "success"})
+
 
 
                 
