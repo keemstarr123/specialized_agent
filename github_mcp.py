@@ -373,12 +373,18 @@ def send_whatsapp(link:str):
     """
     link = "https://lucky-draw-snowy.vercel.app/" if link != "https://lucky-draw-snowy.vercel.app/" else link
 
-    message = twilio_client.messages.create(
-        content_sid="HX4f99487d6dbd00b49399d9f76f49188b",
-        from_="whatsapp:+19893316241",  # <-- Your Messaging Service SID (recommended)
-        to="whatsapp:+601156388248",                         # <-- Receiver phone number
-        content_variables=json.dumps({"1": "Vishnu"}) # change to link when approved   
-    )
+    customer_list = [('Shiny Lee Xin Jian', 'whatsapp:+60123186212'), ('Vishnu Ram', 'whatsapp:+601156388248'),('Hinz Chong', 'whatsapp:+60126194977'), ('Thong Hao Hong', 'whatsapp:+60109450225')]
+
+    twilio_client = Client(account_sid, auth_token)
+
+
+    for name, contact in customer_list:
+        message = twilio_client.messages.create(
+            content_sid="HXc4de59fbfdd054ed69ca582a3f4629d3",
+            from_="whatsapp:+19893316241",  # <-- Your Messaging Service SID (recommended)
+            to=contact,                         # <-- Receiver phone number
+            content_variables=json.dumps({"1": name})
+        )
 
     print("Message sent!")
     print("SID:", message.sid)
@@ -394,9 +400,27 @@ Creative_Agent = create_agent(
 
 Media_Agent = create_agent(
     llm,
-    tools=[],
+    tools=[send_whatsapp],
     system_prompt="Hello"
 )
+
+@app.post("/send_whatsapp")
+def send_whatsapp_post():
+    customer_list = [('Shiny Lee Xin Jian', 'whatsapp:+60123186212'), ('Vishnu Ram', 'whatsapp:+601156388248'),('Hinz Chong', 'whatsapp:+60126194977'), ('Thong Hao Hong', 'whatsapp:+60109450225')]
+
+    twilio_client = Client(account_sid, auth_token)
+
+
+    for name, contact in customer_list:
+        message = twilio_client.messages.create(
+            content_sid="HXc4de59fbfdd054ed69ca582a3f4629d3",
+            from_="whatsapp:+19893316241",  # <-- Your Messaging Service SID (recommended)
+            to=contact,                         # <-- Receiver phone number
+            content_variables=json.dumps({"1": name})
+        )
+
+    print("Message sent!")
+    print("SID:", message.sid)
 
 
 @app.post("/creative")
@@ -411,11 +435,11 @@ def creative_agent_interaction(prompt: UserInput):
                         }]
                     },
                     config={"recursion_limit": 25},
-                )["messages"][-1].content
+                )["messages"][-1].content[0]['text']
     return result 
 
 @app.post("/media")
-def creative_agent_interaction(prompt: UserInput):
+def media_agent_interaction(prompt: UserInput):
     result = Media_Agent.invoke(
                     {
                         "messages": [{
@@ -426,7 +450,8 @@ def creative_agent_interaction(prompt: UserInput):
                         }]
                     },
                     config={"recursion_limit": 25},
-                )["messages"][-1].content
+                )["messages"][-1].content[0]['text']
+    return result 
 
 @app.get("/ping")
 async def ping():
@@ -437,6 +462,7 @@ async def ping():
 async def mcp_test():
     tools = await mcp_client.get_tools()
     return {"tool_count": len(tools)}
+
 
 
 
